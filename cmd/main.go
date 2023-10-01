@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+	InitDB()
 	r := gin.Default()
 
 	// Load the GraphiQL HTML template
@@ -29,6 +30,5 @@ func main() {
 	r.GET("/sandbox", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "graphiql.html", nil)
 	})
-
 	r.Run() // Listen and Serve on 0.0.0.0:8080 by default
 }
