@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"pod-be/cmd/db"
 	"pod-be/pkg/modules/user"
 
 	"github.com/gin-gonic/gin"
@@ -9,7 +10,7 @@ import (
 )
 
 func main() {
-	InitDB()
+	db.InitDB()
 	r := gin.Default()
 
 	// Load the GraphiQL HTML template
