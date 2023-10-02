@@ -10,9 +10,9 @@ import (
 
 type User struct {
 	gorm.Model
-	Name  string
-	Email string
-	Phone string
+	Name  *string
+	Email *string
+	Phone string `gorm:"type:varchar(100);uniqueIndex;not null"`
 }
 
 var models = []interface{}{

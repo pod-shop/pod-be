@@ -9,7 +9,7 @@ import (
 )
 
 func GetUserByID(id string) (*dto.UserDTO, error) {
-	var user db.User // Assuming db.User is your GORM model struct for the User
+	var user db.User // Adjust according to your actual import path and structure
 
 	result := db.DB.First(&user, "id = ?", id)
 	if result.Error != nil {
@@ -22,15 +22,15 @@ func GetUserByID(id string) (*dto.UserDTO, error) {
 	return &dto.UserDTO{
 		Name:  user.Name,
 		Email: user.Email,
-		Phone: user.Phone,
+		Phone: user.Phone, // Keep the nullability
 	}, nil
 }
 
-func CreateUser(name, email, phone string) (*dto.UserDTO, error) {
+func CreateUser(name, email *string, phone string) (*dto.UserDTO, error) {
 	user := db.User{
 		Name:  name,
 		Email: email,
-		Phone: phone,
+		Phone: phone, // Keep the nullability
 	}
 
 	if err := db.DB.Create(&user).Error; err != nil {
@@ -40,6 +40,6 @@ func CreateUser(name, email, phone string) (*dto.UserDTO, error) {
 	return &dto.UserDTO{
 		Name:  user.Name,
 		Email: user.Email,
-		Phone: user.Phone,
+		Phone: user.Phone, // Keep the nullability
 	}, nil
 }

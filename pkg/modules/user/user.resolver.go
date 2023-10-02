@@ -46,15 +46,23 @@ var MutationType = graphql.NewObject(graphql.ObjectConfig{
 			Type:        UserType, // This should be your UserType defined in the dto package
 			Description: "Create a new user",
 			Args: graphql.FieldConfigArgument{
-				"name":  &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
-				"email": &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
-				"phone": &graphql.ArgumentConfig{Type: graphql.String},
+				"name":  &graphql.ArgumentConfig{Type: graphql.String},
+				"email": &graphql.ArgumentConfig{Type: graphql.String},
+				"phone": &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
 			},
 			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
-				name, _ := params.Args["name"].(string)
-				email, _ := params.Args["email"].(string)
+				nameArg, nameProvided := params.Args["name"].(string)
+				emailArg, emailProvided := params.Args["email"].(string)
 				phone, _ := params.Args["phone"].(string)
 
+				var name *string
+				var email *string
+				if nameProvided {
+					name = &nameArg
+				}
+				if emailProvided {
+					email = &emailArg
+				}
 				user, err := CreateUser(name, email, phone)
 				if err != nil {
 					return nil, err
