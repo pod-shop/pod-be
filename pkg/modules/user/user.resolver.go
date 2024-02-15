@@ -1,10 +1,50 @@
 package user
 
 import (
+	"fmt"
 	"pod-be/pkg/errorhandling"
+	"pod-be/pkg/modules/elasticsearch"
 	"pod-be/pkg/modules/user/dto"
 
 	"github.com/graphql-go/graphql"
+)
+
+var SchoolType = graphql.NewObject(
+	graphql.ObjectConfig{
+		Name: "School",
+		Fields: graphql.Fields{
+			"name": &graphql.Field{
+				Type: graphql.String,
+			},
+			"description": &graphql.Field{
+				Type: graphql.String,
+			},
+			"street": &graphql.Field{
+				Type: graphql.String,
+			},
+			"city": &graphql.Field{
+				Type: graphql.String,
+			},
+			"state": &graphql.Field{
+				Type: graphql.String,
+			},
+			"zip": &graphql.Field{
+				Type: graphql.String,
+			},
+			"location": &graphql.Field{
+				Type: graphql.NewList(graphql.Float),
+			},
+			"fees": &graphql.Field{
+				Type: graphql.Float,
+			},
+			"tags": &graphql.Field{
+				Type: graphql.NewList(graphql.String),
+			},
+			"rating": &graphql.Field{
+				Type: graphql.Float,
+			},
+		},
+	},
 )
 
 var QueryType = graphql.NewObject(
@@ -34,6 +74,33 @@ var QueryType = graphql.NewObject(
 						Email: user.Email,
 						Phone: user.Phone,
 					}, nil
+				},
+			},
+			"school": &graphql.Field{
+				Type: SchoolType,
+				Args: graphql.FieldConfigArgument{
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					// Create a new Elasticsearch client
+					es, err := elasticsearch.NewElasticsearchClient()
+					if err != nil {
+						return nil, fmt.Errorf("error creating the Elasticsearch client: %s", err)
+					}
+
+					// Create a new Elasticsearch service
+					esService := NewElasticsearchService(es)
+
+					// Call the GetSchoolByID method
+					schoolDoc, err := esService.GetDocumentByID("school", p.Args["id"].(string))
+					if err != nil {
+						return nil, fmt.Errorf("error retrieving school: %s", err)
+					}
+
+					// Map Elasticsearch document fields to GraphQL school fields
+					return schoolDoc["_source"], nil
 				},
 			},
 		},

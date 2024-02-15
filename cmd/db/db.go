@@ -21,7 +21,7 @@ var models = []interface{}{
 var DB *gorm.DB
 
 func InitDB() {
-	dsn := "host=127.0.0.1 user=postgres password=tachtach12203 dbname=gorm port=5433 sslmode=disable TimeZone=Asia/Shanghai"
+	dsn := "host=127.0.0.1 user=postgres password=postgres dbname=test-golang port=5433 sslmode=disable TimeZone=Asia/Shanghai"
 	var err error
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
